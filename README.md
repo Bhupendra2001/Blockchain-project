@@ -1,52 +1,27 @@
-# Promise has typically 3 states
-- Pending : not awaited and hence has not completed yet ( e.g. typically when you dont await an axios or db call)
-- Rejected: When promise failed ( wrong url | server down etc)
-- Fulfilled: Promise completed succesfully (e.g. db call has completed and returned a result succesfully)
-// - settled : referes to a combination of either rejhected or fulfilled
+#Read the initial pages of the documentation till the first api i.e. /assets api  : https://docs.coincap.io/ 
+ignore most of the stuff ( it might seem very verbose at this stage) and just try to get a basic idea 
+Now create an API key from the section which says  “Request API Key- Click here to request your API key”
+the “HEADER” section above it also contains details on how to use this API key
+“set the header field Authorization=Bearer XXXX” :- you have to create a header named “Authorization” and set its value to “Bearer XXXX” where XXXX stands for the API key that you have generated above
 
 
-# What is a promise:
-- layman's definition: It is something in JS that tells us whether an operation has completed or not (pending)
-- technical definition: it is a JS object that represents whether an asynchronous operation(like db or axios call) is completed or not
+Now the assignment is to create an API that does the following ( one single API and not multiple separate API’s)
 
+Get the list of all the top 100 cryptocurrency coins in the world using the /assets api ( the first api mentioned in the documentation)
+Save all the 100 coins in database ( each document to have data of 1 coin)
+The schema should have the following 4 keys:
+ {  "symbol" // String and Unique
+    "name": // String and Unique
+    "marketCapUsd": // String  ( not Number)
+     "priceUsd": //String
+   }
+Notice that changePercent24Hr key is not present in the schema or collection
 
+Send back the list of all the coins sorted in order of their growth in last 24 hours   i.e. sort all the 100 coins based on their changePercent24Hr and send the sorted array in response
 
+The above has to be done in one single API and not multiple separate API’s. SO go step by step and build features into your API one by one.
 
-
-// GIT link..go thourgh this code thoroughly..it will result in a confusion when you are going though the code- postman se hit kar rhe hai and same axios se bhi hit kar rhe hai ..why?
-// a short video ..4-5 mins  summary on what we covered today
-// An asignment :
-1.  WRITE A GET API TO GET THE LIST OF ALL THE "vaccination sessions by district id" for any given district id and for any given date
-2.  GOTO  http://api.openweathermap.org => “subscribe” current weather data ==> get api key for Free version ==> create new account and Verify your emailId( Must verify to avoid issues) => go to My APi keys under your account name(top right corner) or https://home.openweathermap.org/api_keys => save the key/appid somewhere. Now proceed further
-Create API's to do each of the following:
-                        http://api.openweathermap.org/data/2.5/weather?q=London&appid=<useYourOwnAppId>
-                    - get weather of London from   (NOTE: must use HTTP infront of the url else axios will attempt to hit localhost and give error  ..also use HTTP only and not HTTPS)
-                    - then change the above to get the temperature only( of London)
-                    - Sort the cities  ["Bengaluru","Mumbai", "Delhi", "Kolkata", "Chennai", "London", "Moscow"] in order of their increasing temperature
-                    result should look something like this
-                    [
-                    {city:"London", temp: 280},
-                    {city:"Moscow", temp: 290},
-                    {city:"Bangalore", temp: 301.2},
-                    .......
-                    ]
-
-3. Axios POST request assignment
-
-            1. Get all the memes at Postman (https://api.imgflip.com/get_memes)
-            2. Pick a memeId you want (Eg 129242436) for the POST request
-            3. Create a Post request (https://api.imgflip.com/caption_image) with only query params. Following are the params (copy username and password exactly as given below):
-            template_id <meme_id>
-            text0 <text you want as a caption>
-            text1 <optional>
-            username chewie12345
-            password meme@123
-            
-            username  sahil123
-            password Sahil@890
-
-            4. Return a response with a body like this
-            "data": {
-                    "url": "https://i.imgflip.com/5mvxax.jpg",
-                    "page_url": "https://imgflip.com/i/5mvxax"
-                }
+NOTE: When you hit the api for the first time, it will create 100 documents corresponding to the 100 coins in your database. Now next time when you hit your API, it will fail as you have made the symbol and name unique in your schema. Same coins can't be saved again as they will have the same symbol and name. SO you could do one of these 3 things to help yourself in the development phase:
+- delete the data from DB every time after hitting your API 
+- Don't maintain “unique:true” in your schema till you are done with your development and add unique:true only towards the completion of your assignment
+- for inserting the documents, use findOneAndUpdate with upsert=true..this will create a new document in case there is no entry or will update the old doc with new values when there is an entry already there
